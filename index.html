@@ -27,38 +27,48 @@
       user-select: none;
     }
 
-    /* ESCENARIO PRINCIPAL: HORNO A PANTALLA COMPLETA */
-    .oven-fullscreen {
+    .oven-wrapper {
       position: absolute;
       inset: 0;
-      background-color: #1b0d06;
-      background-image: url('galletas-horno.jpg');
-      background-size: cover;
-      background-position: center;
-      transition: filter 0.35s ease, transform 0.15s ease;
+      background: #1b0d06;
       z-index: 1;
+      overflow: hidden;
+      transition: filter 0.35s ease, transform 0.15s ease;
     }
 
-    .oven-fullscreen::before {
-      content: '';
+    .oven-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      display: block;
+    }
+
+    .oven-vignette {
       position: absolute;
       inset: 0;
-      background: radial-gradient(circle at 50% 52%, rgba(0,0,0,0.08) 38%, rgba(0, 15, 38, 0.85) 100%);
+      background: radial-gradient(circle at 50% 52%, rgba(0,0,0,0.05) 38%, rgba(0, 15, 38, 0.85) 100%);
       pointer-events: none;
     }
 
-    .oven-fullscreen.heating {
+    .oven-wrapper.heating .oven-vignette {
       box-shadow: inset 0 0 110px rgba(255, 95, 0, 0.85);
+    }
+
+    .oven-wrapper.heating .oven-img {
       filter: contrast(1.06) saturate(1.15);
     }
 
-    .oven-fullscreen.critical {
+    .oven-wrapper.critical {
       animation: ovenShake 0.12s infinite alternate;
+    }
+
+    .oven-wrapper.critical .oven-vignette {
       box-shadow: inset 0 0 150px rgba(255, 30, 0, 0.95);
     }
 
-    .oven-fullscreen.burned {
-      filter: brightness(0.25) contrast(1.4) grayscale(0.85);
+    .oven-wrapper.burned .oven-img {
+      filter: brightness(0.24) contrast(1.4) grayscale(0.85);
     }
 
     @keyframes ovenShake {
@@ -66,7 +76,6 @@
       to { transform: scale(1.015) translate(2px, -1px); }
     }
 
-    /* MODO CARNAVAL: GLOBO DE AGUA FULLSCREEN */
     .carnival-fullscreen {
       position: absolute;
       inset: 0;
@@ -78,19 +87,23 @@
     }
 
     .water-balloon {
-      width: 140px;
-      height: 165px;
+      width: 145px;
+      height: 170px;
       background: radial-gradient(circle at 30% 30%, #a5f3fc, #00C8FF 45%, #00377D 100%);
       border-radius: 50% 50% 50% 50% / 45% 45% 55% 55%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-weight: 900;
-      font-size: 2rem;
-      color: #fff;
       box-shadow: 0 25px 60px rgba(0, 200, 255, 0.65);
       transition: transform 0.06s linear;
       position: relative;
+      padding: 20px;
+    }
+
+    .water-balloon img {
+      width: 75%;
+      height: auto;
+      object-fit: contain;
     }
 
     .water-balloon::after {
@@ -103,7 +116,6 @@
       clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%);
     }
 
-    /* CAPA DE INTERFAZ */
     .hud-layer {
       position: relative;
       z-index: 10;
@@ -125,7 +137,7 @@
       display: flex;
       align-items: center;
       gap: 20px;
-      background: rgba(0, 26, 62, 0.78);
+      background: rgba(0, 26, 62, 0.82);
       backdrop-filter: blur(8px);
       padding: 12px 24px;
       border-radius: 20px;
@@ -133,9 +145,11 @@
       box-shadow: 0 12px 30px rgba(0,0,0,0.45);
     }
 
-    .tigo-official-logo {
-      height: 50px;
+    .tigo-logo-img {
+      height: 52px;
       width: auto;
+      object-fit: contain;
+      display: block;
     }
 
     .title-group h1 {
@@ -178,7 +192,6 @@
       border-color: var(--tigo-cyan);
     }
 
-    /* CRONÓMETRO CENTRAL DE TENSIÓN */
     .timer-hud {
       position: absolute;
       top: 22px;
@@ -230,7 +243,6 @@
       margin-top: 4px;
     }
 
-    /* BARRA INFERIOR */
     .bottom-bar {
       display: flex;
       justify-content: space-between;
@@ -271,7 +283,6 @@
       pointer-events: auto;
     }
 
-    /* QR COMPACTO ABAJO A LA DERECHA */
     .qr-dock {
       background: #ffffff;
       color: var(--tigo-dark);
@@ -289,6 +300,8 @@
       background: #fff;
       padding: 4px;
       border-radius: 8px;
+      min-width: 136px;
+      min-height: 136px;
     }
 
     .qr-text {
@@ -330,7 +343,6 @@
       color: #059669;
     }
 
-    /* MODAL RESULTADO */
     .result-modal {
       position: fixed;
       inset: 0;
@@ -383,27 +395,23 @@
 </head>
 <body>
 
-  <!-- FONDO 1: HORNO CON GALLETAS TIGO -->
-  <div class="oven-fullscreen" id="ovenBg"></div>
-
-  <!-- FONDO 2: GLOBO DE AGUA CARNAVAL -->
-  <div class="carnival-fullscreen" id="carnivalBg">
-    <div class="water-balloon" id="waterBalloon">tigo</div>
+  <div class="oven-wrapper" id="ovenBg">
+    <img class="oven-img" id="ovenImg" src="galletas-horno.jpg" alt="Horno Galletas Tigo"
+         onerror="tryNextOvenExt(this)" />
+    <div class="oven-vignette"></div>
   </div>
 
-  <!-- CAPA DE INTERFAZ -->
+  <div class="carnival-fullscreen" id="carnivalBg">
+    <div class="water-balloon" id="waterBalloon">
+      <img src="logo-tigo.png" alt="Tigo" onerror="tryNextLogoExt(this)" />
+    </div>
+  </div>
+
   <div class="hud-layer">
     <header>
       <div class="brand-lockup">
-        <svg class="tigo-official-logo" viewBox="0 0 260 175" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M18 14 C18 7 24 3 31 3 C38 3 43 7 43 14 V38 H56 C62 38 66 42 66 48 C66 54 62 58 56 58 H43 V96 C43 105 47 109 55 109 C58 109 61 108 63 108 C68 108 71 112 71 117 C71 123 65 128 52 128 C28 128 18 116 18 95 V58 H11 C5 58 1 54 1 48 C1 42 5 38 11 38 H18 V14 Z" fill="#FFFFFF"/>
-          <circle cx="88" cy="18" r="13" fill="#FFFFFF"/>
-          <rect x="76" y="38" width="24" height="88" rx="12" fill="#FFFFFF"/>
-          <path d="M168 48 C168 41 163 37 156 37 C151 37 148 39 146 43 C141 38 134 36 126 36 C103 36 88 53 88 78 C88 102 103 118 125 118 C133 118 140 115 145 110 V116 C145 128 137 135 124 135 C115 135 109 132 104 129 C99 127 94 129 92 134 C90 139 92 144 98 147 C106 152 115 154 126 154 C153 154 168 139 168 114 V48 Z M128 98 C116 98 109 89 109 77 C109 65 116 56 128 56 C139 56 146 65 146 77 C146 89 139 98 128 98 Z" fill="#FFFFFF"/>
-          <path d="M189 22 C202 8 232 8 245 22 C249 26 248 32 243 35 C239 38 234 36 230 33 C221 25 213 25 204 33 C200 36 195 38 191 35 C186 32 185 26 189 22 Z" fill="#FFFFFF"/>
-          <path d="M217 36 C192 36 175 54 175 80 C175 106 192 124 217 124 C242 124 259 106 259 80 C259 54 242 36 217 36 Z M217 103 C204 103 196 93 196 80 C196 67 204 57 217 57 C230 57 238 67 238 80 C238 93 230 103 217 103 Z" fill="#FFFFFF"/>
-          <path d="M126 138 C148 164 195 166 221 141 C226 136 233 137 236 142 C239 147 237 153 231 158 C196 188 141 185 113 151 C109 146 110 140 115 137 C119 134 123 135 126 138 Z" fill="#FFFFFF"/>
-        </svg>
+        <img class="tigo-logo-img" id="headerLogo" src="logo-tigo.png" alt="Tigo"
+             onerror="tryNextLogoExt(this)" />
         <div class="title-group">
           <h1 id="mainHeadline">Salva las Galletas</h1>
           <p id="subHeadline">Frena en <strong>10.000 seg</strong> exactos</p>
@@ -418,9 +426,7 @@
       <div class="top-tools">
         <button class="btn-pill active" id="btnNavidad" onclick="setTheme('navidad')">🎄 Navidad</button>
         <button class="btn-pill" id="btnCarnaval" onclick="setTheme('carnaval')">💦 Carnaval</button>
-        <button class="btn-pill" onclick="document.getElementById('bgUploader').click()">🖼️ Imagen</button>
         <button class="btn-pill" onclick="simulateAction()">⚡ Demo</button>
-        <input type="file" id="bgUploader" accept="image/*" style="display:none" onchange="loadCustomBg(event)" />
       </div>
     </header>
 
@@ -446,7 +452,6 @@
     </div>
   </div>
 
-  <!-- MODAL RESULTADO -->
   <div class="result-modal" id="resultModal">
     <div class="result-box">
       <h2 id="resultTitle">¡GALLETAS SALVADAS!</h2>
@@ -456,13 +461,38 @@
   </div>
 
   <script>
+    const ovenFallbacks = [
+      'galletas-horno.jpeg',
+      'galletas-horno.JPG',
+      'galletas-horno.png',
+      'galletas%20tigo%20jenjibre.jpeg'
+    ];
+    let ovenTryIdx = 0;
+    function tryNextOvenExt(imgEl) {
+      if (ovenTryIdx < ovenFallbacks.length) {
+        imgEl.src = ovenFallbacks[ovenTryIdx++];
+      }
+    }
+
+    const logoFallbacks = [
+      'logo-tigo.PNG',
+      'LOGO%20TIGO%20BLANCO_2.png',
+      'LOGO%20TIGO%20BLANCO.png'
+    ];
+    let logoTryIdx = 0;
+    function tryNextLogoExt(imgEl) {
+      if (logoTryIdx < logoFallbacks.length) {
+        imgEl.src = logoFallbacks[logoTryIdx++];
+      }
+    }
+
     const urlParams = new URLSearchParams(window.location.search);
     const branchName = (urlParams.get('tienda') || 'DEMO-CENTRAL').toUpperCase();
     const roomId = `TIGO-${branchName}-${Math.floor(100 + Math.random() * 899)}`;
     let storeLeads = JSON.parse(localStorage.getItem(`leads_${branchName}`) || '[]');
 
     let theme = 'navidad';
-    let state = 'IDLE'; // IDLE, RUNNING, FINISHED
+    let state = 'IDLE';
     let startTime = 0;
     let rafId = null;
     let activeConn = null;
@@ -471,18 +501,219 @@
     document.getElementById('branchLabel').innerText = branchName;
     document.getElementById('leadsCount').innerText = storeLeads.length;
 
-    // Respaldo por si se prueba localmente antes de subir a GitHub
-    function loadCustomBg(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        const dataUrl = e.target.result;
-        document.getElementById('ovenBg').style.backgroundImage = `url('${dataUrl}')`;
-        try { localStorage.setItem('tigo_oven_img', dataUrl); } catch (err) {}
-      };
-      reader.readAsDataURL(file);
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function playTone(freq, type, duration, vol = 0.16) {
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+      gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + duration);
     }
 
-    (function checkLocalImg() {
-      const savedImg = localStorage.getItem('tigo_oven_img');
+    const baseUrl = window.location.href.split('?')[0].replace(/index\.html$/, '');
+
+    function renderDynamicQR() {
+      const qrBox = document.getElementById('qrcode');
+      qrBox.innerHTML = '';
+      const dynamicUrl = `${baseUrl}control.html?room=${roomId}&theme=${theme}`;
+      new QRCode(qrBox, {
+        text: dynamicUrl,
+        width: 128,
+        height: 128,
+        colorDark: "#001E44",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.M
+      });
+    }
+    renderDynamicQR();
+
+    const bc = new BroadcastChannel(`tigo_channel_${branchName}`);
+    bc.onmessage = (e) => handleRemoteCommand(e.data);
+
+    const peer = new Peer(roomId);
+    peer.on('connection', (conn) => {
+      if (state === 'RUNNING') {
+        conn.on('open', () => conn.send({ type: 'BUSY' }));
+        return;
+      }
+      activeConn = conn;
+      document.getElementById('connStatus').innerText = '📱 ¡Conectado! Listo';
+      conn.on('data', (data) => handleRemoteCommand(data));
+      conn.on('open', () => conn.send({ type: 'SYNC_THEME', theme }));
+    });
+
+    function handleRemoteCommand(data) {
+      if (data.type === 'START' && state === 'IDLE') startGame();
+      if (data.type === 'STOP' && state === 'RUNNING') stopGame(data.elapsed);
+      if (data.type === 'RESET') resetGame();
+      if (data.type === 'NEW_LEAD') {
+        const record = { sucursal: branchName, ...data };
+        storeLeads.push(record);
+        localStorage.setItem(`leads_${branchName}`, JSON.stringify(storeLeads));
+        document.getElementById('leadsCount').innerText = storeLeads.length;
+      }
+    }
+
+    function setTheme(newTheme) {
+      theme = newTheme;
+      document.getElementById('btnNavidad').classList.toggle('active', theme === 'navidad');
+      document.getElementById('btnCarnaval').classList.toggle('active', theme === 'carnaval');
+
+      if (theme === 'navidad') {
+        document.getElementById('mainHeadline').innerText = 'Salva las Galletas';
+        document.getElementById('subHeadline').innerHTML = 'Frena en <strong>10.000 seg</strong> exactos';
+        document.getElementById('instText').innerHTML = '1. Escanea el QR con tu celular.<br>2. Toca para encender el horno y vuelve a tocar justo en <strong>10.000 seg</strong> antes de que se quemen.';
+        document.getElementById('qrDesc').innerText = 'Escanea para encender y apagar el horno';
+        document.getElementById('ovenBg').style.display = 'block';
+        document.getElementById('carnivalBg').style.display = 'none';
+      } else {
+        document.getElementById('mainHeadline').innerText = 'Globo Carnavalero';
+        document.getElementById('subHeadline').innerHTML = 'Cierra el grifo antes de los <strong>10.000 seg</strong>';
+        document.getElementById('instText').innerHTML = '1. Escanea el QR con tu celular.<br>2. Abre el grifo y ciérralo justo en <strong>10.000 seg</strong> antes de que el globo explote.';
+        document.getElementById('qrDesc').innerText = 'Escanea para abrir y cerrar el grifo';
+        document.getElementById('ovenBg').style.display = 'none';
+        document.getElementById('carnivalBg').style.display = 'flex';
+      }
+
+      renderDynamicQR();
+      resetGame();
+      if (activeConn) activeConn.send({ type: 'SYNC_THEME', theme });
+    }
+
+    function startGame() {
+      if (state === 'RUNNING') return;
+      resetGame();
+      state = 'RUNNING';
+      startTime = performance.now();
+      lastBeepSecond = 0;
+      document.getElementById('ovenBg').classList.add('heating');
+      document.getElementById('instructionsBox').style.opacity = '0.35';
+      playTone(540, 'sine', 0.15);
+      updateLoop();
+    }
+
+    function updateLoop() {
+      if (state !== 'RUNNING') return;
+      const elapsed = (performance.now() - startTime) / 1000;
+      document.getElementById('timerDisplay').innerText = elapsed.toFixed(3).padStart(6, '0');
+
+      const currentWhole = Math.floor(elapsed);
+      if (currentWhole > lastBeepSecond && currentWhole <= 10) {
+        lastBeepSecond = currentWhole;
+        if (elapsed >= 7.0) {
+          playTone(880 + (currentWhole * 40), 'triangle', 0.09, 0.22);
+        } else {
+          playTone(440, 'sine', 0.06, 0.1);
+        }
+      }
+
+      if (elapsed >= 7.5) {
+        document.getElementById('timerHud').classList.add('danger-zone');
+        document.getElementById('ovenBg').classList.add('critical');
+      }
+
+      if (theme === 'carnaval') {
+        const scale = Math.min(2.4, 1 + (elapsed / 10) * 1.3);
+        document.getElementById('waterBalloon').style.transform = `scale(${scale})`;
+      }
+
+      if (elapsed >= 11.8) {
+        stopGame(elapsed);
+        return;
+      }
+      rafId = requestAnimationFrame(updateLoop);
+    }
+
+    function stopGame(remoteElapsed) {
+      if (state !== 'RUNNING') return;
+      state = 'FINISHED';
+      cancelAnimationFrame(rafId);
+
+      const finalTime = remoteElapsed ? parseFloat(remoteElapsed) : (performance.now() - startTime) / 1000;
+      document.getElementById('timerDisplay').innerText = finalTime.toFixed(3).padStart(6, '0');
+      document.getElementById('ovenBg').classList.remove('heating', 'critical');
+      document.getElementById('timerHud').classList.remove('danger-zone');
+      document.getElementById('instructionsBox').style.opacity = '1';
+
+      const diff = Math.abs(finalTime - 10.0);
+      let outcome = 'LOSE';
+      let title = '';
+      let msg = '';
+
+      if (diff <= 0.015) {
+        outcome = 'JACKPOT';
+        title = theme === 'navidad' ? '🏆 ¡PRECISIÓN MAESTRA!' : '🏆 ¡PULSO DE ORO!';
+        msg = `¡Increíble! ${finalTime.toFixed(3)} seg. Ganaste el PREMIO MAYOR. Registra tus datos en tu celular.`;
+        playTone(980, 'triangle', 0.45, 0.25);
+      } else if (diff <= 0.085) {
+        outcome = 'WIN';
+        title = theme === 'navidad' ? '🎄 ¡SALVASTE LAS GALLETAS!' : '💦 ¡GLOBO AL LÍMITE!';
+        msg = `¡Excelentes reflejos! ${finalTime.toFixed(3)} seg. Ganaste un regalo instantáneo Tigo.`;
+        playTone(720, 'sine', 0.35, 0.22);
+      } else {
+        outcome = 'CONSOLATION';
+        if (finalTime < 10.0) {
+          title = theme === 'navidad' ? '🥶 ¡SALIERON CRUDAS!' : '🎈 ¡FALTÓ AGUA!';
+          msg = `Frenaste antes (${finalTime.toFixed(3)}s). ¡Igual ganaste 2GB GRATIS por jugar!`;
+        } else {
+          title = theme === 'navidad' ? '💨 ¡SE QUEMARON!' : '💥 ¡EXPLOTÓ EL GLOBO!';
+          msg = `Te pasaste (${finalTime.toFixed(3)}s). ¡Igual te llevas 2GB GRATIS de consuelo!`;
+          if (theme === 'navidad') document.getElementById('ovenBg').classList.add('burned');
+        }
+        playTone(165, 'sawtooth', 0.4, 0.22);
+      }
+
+      document.getElementById('resultTitle').innerText = title;
+      document.getElementById('resultMsg').innerText = msg;
+      document.getElementById('resultModal').style.display = 'flex';
+
+      if (activeConn) {
+        activeConn.send({ type: 'RESULT', outcome, time: finalTime.toFixed(3), title });
+      }
+    }
+
+    function resetGame() {
+      state = 'IDLE';
+      cancelAnimationFrame(rafId);
+      document.getElementById('timerDisplay').innerText = '00.000';
+      document.getElementById('ovenBg').classList.remove('heating', 'critical', 'burned');
+      document.getElementById('timerHud').classList.remove('danger-zone');
+      document.getElementById('instructionsBox').style.opacity = '1';
+      document.getElementById('waterBalloon').style.transform = 'scale(1)';
+      document.getElementById('resultModal').style.display = 'none';
+      document.getElementById('connStatus').innerText = '🟢 Listo para escanear';
+    }
+
+    function simulateAction() {
+      if (state === 'IDLE' || state === 'FINISHED') startGame();
+      else if (state === 'RUNNING') stopGame();
+    }
+
+    function exportBranchCSV() {
+      if (!storeLeads.length) return alert(`Aún no hay leads registrados en ${branchName}.`);
+      const headers = ['Sucursal,Fecha_Hora,Nombre,Celular,Operador,Interes,Tiempo,Campana'];
+      const rows = storeLeads.map(l =>
+        `"${l.sucursal}","${l.timestamp}","${l.name}","${l.phone}","${l.operator}","${l.interest}","${l.time}","${l.theme}"`
+      );
+      const blob = new Blob([headers.concat(rows).join('\n')], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `Leads_Tigo_${branchName}_${new Date().toISOString().slice(0,10)}.csv`;
+      link.click();
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (e.code === 'Space') {
+        e.preventDefault();
+        simulateAction();
+      }
+    });
+  </script>
+</body>
+</html>
