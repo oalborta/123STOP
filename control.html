@@ -11,8 +11,6 @@
       --tigo-dark: #001E44;
       --tigo-cyan: #00C8FF;
       --tigo-yellow: #FFD100;
-      --danger: #EF4444;
-      --success: #10B981;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; }
@@ -34,13 +32,9 @@
       align-items: center;
     }
 
-    .logo {
-      font-size: 1.5rem;
-      font-weight: 900;
-      background: linear-gradient(135deg, #0052B4, var(--tigo-cyan));
-      padding: 4px 14px;
-      border-radius: 10px;
-      border: 1px solid rgba(255,255,255,0.25);
+    .logo-svg {
+      height: 34px;
+      width: auto;
     }
 
     .conn-pill {
@@ -51,7 +45,6 @@
       background: rgba(255,255,255,0.12);
     }
 
-    /* Vista Principal de Juego */
     .game-pad {
       flex: 1;
       display: flex;
@@ -70,7 +63,6 @@
       line-height: 1.3;
     }
 
-    /* Botón Gigante Táctil */
     .magic-btn {
       width: 230px;
       height: 230px;
@@ -112,7 +104,6 @@
       margin-bottom: 6px;
     }
 
-    /* Vista Captura de Lead (Post-Juego) */
     .lead-card {
       display: none;
       background: #fff;
@@ -120,12 +111,6 @@
       border-radius: 24px;
       padding: 24px 20px;
       box-shadow: 0 20px 45px rgba(0,0,0,0.45);
-      animation: slideUp 0.3s ease-out;
-    }
-
-    @keyframes slideUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
     }
 
     .result-badge {
@@ -176,10 +161,6 @@
       outline: none;
     }
 
-    .form-group input:focus, .form-group select:focus {
-      border-color: var(--tigo-cyan);
-    }
-
     .btn-claim {
       width: 100%;
       background: linear-gradient(135deg, #0052B4, var(--tigo-cyan));
@@ -191,10 +172,8 @@
       font-weight: 900;
       margin-top: 6px;
       cursor: pointer;
-      box-shadow: 0 8px 20px rgba(0, 200, 255, 0.35);
     }
 
-    /* Voucher Final para Mostrar al Anfitrión */
     .voucher-view {
       display: none;
       text-align: center;
@@ -203,11 +182,6 @@
       border-radius: 24px;
       padding: 28px 20px;
       border: 4px dashed var(--tigo-cyan);
-    }
-
-    .voucher-view .check {
-      font-size: 3.5rem;
-      margin-bottom: 8px;
     }
 
     .voucher-code {
@@ -243,21 +217,27 @@
 <body>
 
   <header>
-    <div class="logo">tigo</div>
+    <svg class="logo-svg" viewBox="0 0 260 175" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M18 14 C18 7 24 3 31 3 C38 3 43 7 43 14 V38 H56 C62 38 66 42 66 48 C66 54 62 58 56 58 H43 V96 C43 105 47 109 55 109 C58 109 61 108 63 108 C68 108 71 112 71 117 C71 123 65 128 52 128 C28 128 18 116 18 95 V58 H11 C5 58 1 54 1 48 C1 42 5 38 11 38 H18 V14 Z" fill="#FFFFFF"/>
+      <circle cx="88" cy="18" r="13" fill="#FFFFFF"/>
+      <rect x="76" y="38" width="24" height="88" rx="12" fill="#FFFFFF"/>
+      <path d="M168 48 C168 41 163 37 156 37 C151 37 148 39 146 43 C141 38 134 36 126 36 C103 36 88 53 88 78 C88 102 103 118 125 118 C133 118 140 115 145 110 V116 C145 128 137 135 124 135 C115 135 109 132 104 129 C99 127 94 129 92 134 C90 139 92 144 98 147 C106 152 115 154 126 154 C153 154 168 139 168 114 V48 Z M128 98 C116 98 109 89 109 77 C109 65 116 56 128 56 C139 56 146 65 146 77 C146 89 139 98 128 98 Z" fill="#FFFFFF"/>
+      <path d="M189 22 C202 8 232 8 245 22 C249 26 248 32 243 35 C239 38 234 36 230 33 C221 25 213 25 204 33 C200 36 195 38 191 35 C186 32 185 26 189 22 Z" fill="#FFFFFF"/>
+      <path d="M217 36 C192 36 175 54 175 80 C175 106 192 124 217 124 C242 124 259 106 259 80 C259 54 242 36 217 36 Z M217 103 C204 103 196 93 196 80 C196 67 204 57 217 57 C230 57 238 67 238 80 C238 93 230 103 217 103 Z" fill="#FFFFFF"/>
+      <path d="M126 138 C148 164 195 166 221 141 C226 136 233 137 236 142 C239 147 237 153 231 158 C196 188 141 185 113 151 C109 146 110 140 115 137 C119 134 123 135 126 138 Z" fill="#FFFFFF"/>
+    </svg>
     <div class="conn-pill" id="statusBadge">🟡 Conectando...</div>
   </header>
 
-  <!-- PANTALLA 1: BOTÓN MÁGICO -->
   <main class="game-pad" id="padView">
     <p class="instruction" id="instructionText">Mira la pantalla de la tienda y toca para encender el horno</p>
     <button class="magic-btn" id="magicBtn" onclick="handleTap()">
       <span class="icon" id="btnIcon">🔥</span>
       <span id="btnText">ENCENDER HORNO</span>
     </button>
-    <p style="font-size: 0.85rem; opacity: 0.8;">Meta: Detenerlo en <strong>10.00 seg</strong></p>
+    <p style="font-size: 0.85rem; opacity: 0.8;">Meta: Detenerlo en <strong>10.000 seg</strong></p>
   </main>
 
-  <!-- PANTALLA 2: CAPTURA DE LEAD -->
   <section class="lead-card" id="leadView">
     <span class="result-badge" id="timeBadge">Tiempo: 09.985s</span>
     <h2 id="resultHeading">¡Salvaste las Galletas!</h2>
@@ -282,7 +262,7 @@
         </select>
       </div>
       <div class="form-group">
-        <label>¿Qué servicio te interesa mejorar en casa o móvil?</label>
+        <label>¿Qué servicio te interesa mejorar?</label>
         <select id="userInterest" required>
           <option value="Megas / Plan Móvil">Más Megas / Plan Postpago</option>
           <option value="Internet Fibra Hogar">Internet Wi-Fi Fibra en Casa</option>
@@ -294,18 +274,17 @@
     </form>
   </section>
 
-  <!-- PANTALLA 3: VOUCHER VALIDADO -->
   <section class="voucher-view" id="voucherView">
-    <div class="check">✅</div>
+    <div style="font-size: 3.5rem; margin-bottom: 8px;">✅</div>
     <h2>¡Premio Habilitado!</h2>
     <p style="color:#475569; margin-top:4px;">Muestra esta pantalla al anfitrión Tigo en la entrada para recibir tu regalo:</p>
-    <div class="voucher-code" id="voucherCode">TIGO-8492</div>
+    <div class="voucher-code" id="voucherCode">TG-8492</div>
     <p id="voucherSummary" style="font-size:0.9rem; font-weight:700; color:#00377D;"></p>
     <button class="btn-again" onclick="playAgain()">Jugar otra vez</button>
   </section>
 
   <footer>
-    Activación Oficial Tigo • Sin ficha ni esperas
+    Activación Oficial • Sin ficha ni esperas
   </footer>
 
   <script>
@@ -315,9 +294,6 @@
     let gameState = 'IDLE'; // IDLE, RUNNING, DONE
     let localStart = 0;
     let conn = null;
-
-    // Respaldo local para pruebas en misma computadora
-    const bc = new BroadcastChannel('tigo_game_channel');
 
     function updateButtonUI() {
       const btn = document.getElementById('magicBtn');
@@ -332,27 +308,26 @@
           text.innerText = 'ENCENDER HORNO';
           instr.innerText = 'Mira la pantalla de la tienda y toca para empezar';
         } else {
-          icon.innerText = '💨';
-          text.innerText = 'INFLAR GLOBO';
-          instr.innerText = 'Toca para empezar a inflar el globo carnavalero';
+          icon.innerText = '🚰';
+          text.innerText = 'ABRIR EL GRIFO';
+          instr.innerText = 'Toca para abrir el grifo y llenar el globo de agua';
         }
       } else if (gameState === 'RUNNING') {
         btn.classList.add('running');
         if (theme === 'navidad') {
           icon.innerText = '🛑';
           text.innerText = '¡APAGAR HORNO!';
-          instr.innerText = '¡Frena justo en 10.00 seg antes que se quemen!';
+          instr.innerText = '¡Frena justo en 10.000 seg antes que se quemen!';
         } else {
-          icon.innerText = '✋';
-          text.innerText = '¡FRENAR AIRE!';
-          instr.innerText = '¡Detén el aire antes de los 10.00 seg o explota!';
+          icon.innerText = '🚱';
+          text.innerText = '¡CERRAR GRIFO!';
+          instr.innerText = '¡Cierra el grifo antes de los 10.000 seg o te mojas!';
         }
       }
     }
 
     updateButtonUI();
 
-    // Conectar vía PeerJS a la pantalla de la tienda
     const peer = new Peer();
     peer.on('open', () => {
       if (!roomId) {
@@ -364,6 +339,9 @@
         document.getElementById('statusBadge').innerText = '🟢 Conectado a Pantalla';
       });
       conn.on('data', (data) => {
+        if (data.type === 'BUSY') {
+          document.getElementById('statusBadge').innerText = '⏳ Turno en curso, espera...';
+        }
         if (data.type === 'SYNC_THEME') {
           theme = data.theme;
           updateButtonUI();
@@ -376,7 +354,6 @@
 
     function sendCommand(payload) {
       if (conn && conn.open) conn.send(payload);
-      bc.postMessage(payload);
     }
 
     function handleTap() {
@@ -392,12 +369,11 @@
         const elapsed = ((performance.now() - localStart) / 1000).toFixed(3);
         sendCommand({ type: 'STOP', elapsed });
 
-        // Si estamos en demo sin conexión P2P activa, pasamos directo al formulario
         setTimeout(() => {
           if (document.getElementById('leadView').style.display !== 'block') {
             showLeadForm(elapsed, '¡Buen intento!');
           }
-        }, 350);
+        }, 400);
       }
     }
 
@@ -427,13 +403,8 @@
         theme
       };
 
-      // Enviar lead a la pantalla/panel de la tienda y guardar respaldo local
       sendCommand(leadData);
-      const saved = JSON.parse(localStorage.getItem('tigo_leads') || '[]');
-      saved.push(leadData);
-      localStorage.setItem('tigo_leads', JSON.stringify(saved));
 
-      // Mostrar Voucher al usuario
       const code = 'TG-' + Math.floor(1000 + Math.random() * 9000);
       document.getElementById('leadView').style.display = 'none';
       document.getElementById('voucherView').style.display = 'block';
