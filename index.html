@@ -250,94 +250,76 @@
       width: 100%;
     }
 
-    .instructions-box {
-      background: rgba(0, 22, 54, 0.84);
-      backdrop-filter: blur(8px);
-      border-left: 5px solid var(--tigo-cyan);
-      padding: 14px 20px;
-      border-radius: 14px;
-      max-width: 440px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.45);
-      transition: opacity 0.3s;
-    }
-
-    .instructions-box h3 {
-      font-size: 1rem;
-      color: var(--tigo-yellow);
-      text-transform: uppercase;
-      margin-bottom: 4px;
-      letter-spacing: 0.5px;
-    }
-
-    .instructions-box p {
-      font-size: 0.92rem;
-      line-height: 1.35;
-      color: #e2e8f0;
-    }
-
     .meta-footer {
-      margin-top: 8px;
-      font-size: 0.78rem;
-      color: var(--tigo-cyan);
-      font-weight: 700;
+      background: rgba(0, 18, 44, 0.72);
+      backdrop-filter: blur(6px);
+      padding: 6px 14px;
+      border-radius: 99px;
+      font-size: 0.76rem;
+      color: rgba(255, 255, 255, 0.85);
+      font-weight: 600;
       pointer-events: auto;
+      border: 1px solid rgba(255,255,255,0.18);
     }
 
     .qr-dock {
       background: #ffffff;
       color: var(--tigo-dark);
-      border-radius: 20px;
-      padding: 14px 16px;
+      border-radius: 22px;
+      padding: 16px 20px;
       display: flex;
       align-items: center;
-      gap: 14px;
-      box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+      gap: 16px;
+      box-shadow: 0 18px 40px rgba(0,0,0,0.65);
       border: 3px solid var(--tigo-cyan);
       pointer-events: auto;
+      transition: opacity 0.3s;
     }
 
     #qrcode {
       background: #fff;
       padding: 4px;
       border-radius: 8px;
-      min-width: 136px;
-      min-height: 136px;
+      min-width: 132px;
+      min-height: 132px;
     }
 
     .qr-text {
       text-align: left;
-      max-width: 165px;
+      max-width: 195px;
     }
 
     .qr-tag {
       display: inline-block;
       background: var(--tigo-yellow);
       color: var(--tigo-dark);
-      font-size: 0.7rem;
+      font-size: 0.74rem;
       font-weight: 900;
-      padding: 3px 8px;
+      padding: 3px 10px;
       border-radius: 99px;
-      margin-bottom: 5px;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
     }
 
     .qr-text h4 {
-      font-size: 1.02rem;
+      font-size: 1.05rem;
       font-weight: 900;
       color: var(--tigo-blue);
       line-height: 1.15;
-      margin-bottom: 4px;
+      margin-bottom: 6px;
     }
 
     .qr-text span {
       display: block;
-      font-size: 0.78rem;
-      color: #475569;
-      line-height: 1.25;
+      font-size: 0.82rem;
+      color: #334155;
+      line-height: 1.3;
       font-weight: 600;
     }
 
     .qr-status {
-      margin-top: 6px;
+      margin-top: 8px;
       font-size: 0.74rem;
       font-weight: 800;
       color: #059669;
@@ -431,21 +413,17 @@
     </header>
 
     <div class="bottom-bar">
-      <div class="instructions-box" id="instructionsBox">
-        <h3>¿Cómo jugar sin hacer fila?</h3>
-        <p id="instText">1. Escanea el QR con tu celular.<br>2. Toca para encender el horno y vuelve a tocar justo en <strong>10.000 seg</strong> antes de que se quemen.</p>
-        <div class="meta-footer">
-          Oficina: <span id="branchLabel">DEMO</span> • Leads hoy: <span id="leadsCount">0</span> •
-          <span style="text-decoration:underline; cursor:pointer;" onclick="exportBranchCSV()">Descargar Excel</span>
-        </div>
+      <div class="meta-footer">
+        Oficina: <span id="branchLabel">DEMO</span> • Leads: <span id="leadsCount">0</span> •
+        <span style="text-decoration:underline; cursor:pointer; color:var(--tigo-cyan);" onclick="exportBranchCSV()">Descargar Excel</span>
       </div>
 
-      <div class="qr-dock">
+      <div class="qr-dock" id="qrDock">
         <div id="qrcode"></div>
         <div class="qr-text">
-          <span class="qr-tag">SIN FICHA • GRATIS</span>
-          <h4>Tu cel es el botón mágico</h4>
-          <span id="qrDesc">Escanea para encender y apagar el horno</span>
+          <span class="qr-tag">¿Cómo jugar?</span>
+          <h4>Escanea desde tu cel y enciende el botón</h4>
+          <span id="qrDesc">Frena el horno justo en <strong>10.000 seg</strong> antes de que se quemen.</span>
           <div class="qr-status" id="connStatus">🟢 Listo para escanear</div>
         </div>
       </div>
@@ -524,8 +502,8 @@
       const dynamicUrl = `${baseUrl}control.html?room=${roomId}&theme=${theme}`;
       new QRCode(qrBox, {
         text: dynamicUrl,
-        width: 128,
-        height: 128,
+        width: 124,
+        height: 124,
         colorDark: "#001E44",
         colorLight: "#ffffff",
         correctLevel: QRCode.CorrectLevel.M
@@ -568,15 +546,13 @@
       if (theme === 'navidad') {
         document.getElementById('mainHeadline').innerText = 'Salva las Galletas';
         document.getElementById('subHeadline').innerHTML = 'Frena en <strong>10.000 seg</strong> exactos';
-        document.getElementById('instText').innerHTML = '1. Escanea el QR con tu celular.<br>2. Toca para encender el horno y vuelve a tocar justo en <strong>10.000 seg</strong> antes de que se quemen.';
-        document.getElementById('qrDesc').innerText = 'Escanea para encender y apagar el horno';
+        document.getElementById('qrDesc').innerHTML = 'Frena el horno justo en <strong>10.000 seg</strong> antes de que se quemen.';
         document.getElementById('ovenBg').style.display = 'block';
         document.getElementById('carnivalBg').style.display = 'none';
       } else {
         document.getElementById('mainHeadline').innerText = 'Globo Carnavalero';
         document.getElementById('subHeadline').innerHTML = 'Cierra el grifo antes de los <strong>10.000 seg</strong>';
-        document.getElementById('instText').innerHTML = '1. Escanea el QR con tu celular.<br>2. Abre el grifo y ciérralo justo en <strong>10.000 seg</strong> antes de que el globo explote.';
-        document.getElementById('qrDesc').innerText = 'Escanea para abrir y cerrar el grifo';
+        document.getElementById('qrDesc').innerHTML = 'Cierra el grifo justo en <strong>10.000 seg</strong> antes de que el globo explote.';
         document.getElementById('ovenBg').style.display = 'none';
         document.getElementById('carnivalBg').style.display = 'flex';
       }
@@ -593,7 +569,7 @@
       startTime = performance.now();
       lastBeepSecond = 0;
       document.getElementById('ovenBg').classList.add('heating');
-      document.getElementById('instructionsBox').style.opacity = '0.35';
+      document.getElementById('qrDock').style.opacity = '0.45';
       playTone(540, 'sine', 0.15);
       updateLoop();
     }
@@ -639,7 +615,7 @@
       document.getElementById('timerDisplay').innerText = finalTime.toFixed(3).padStart(6, '0');
       document.getElementById('ovenBg').classList.remove('heating', 'critical');
       document.getElementById('timerHud').classList.remove('danger-zone');
-      document.getElementById('instructionsBox').style.opacity = '1';
+      document.getElementById('qrDock').style.opacity = '1';
 
       const diff = Math.abs(finalTime - 10.0);
       let outcome = 'LOSE';
@@ -684,7 +660,7 @@
       document.getElementById('timerDisplay').innerText = '00.000';
       document.getElementById('ovenBg').classList.remove('heating', 'critical', 'burned');
       document.getElementById('timerHud').classList.remove('danger-zone');
-      document.getElementById('instructionsBox').style.opacity = '1';
+      document.getElementById('qrDock').style.opacity = '1';
       document.getElementById('waterBalloon').style.transform = 'scale(1)';
       document.getElementById('resultModal').style.display = 'none';
       document.getElementById('connStatus').innerText = '🟢 Listo para escanear';
