@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Tigo Juega - Pantalla Tienda</title>
-  <!-- Librerías gratuitas CDN: QRCode y PeerJS (WebRTC P2P costo cero) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
   <style>
@@ -13,25 +12,32 @@
       --tigo-dark: #001E44;
       --tigo-cyan: #00C8FF;
       --tigo-yellow: #FFD100;
-      --ginger: #C67D3B;
-      --ginger-dark: #8D511E;
-      --ginger-burn: #2D241E;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
 
     body {
-      background: radial-gradient(circle at center, var(--tigo-blue) 0%, var(--tigo-dark) 100%);
+      background: radial-gradient(circle at 35% 45%, #0047A0 0%, var(--tigo-blue) 45%, var(--tigo-dark) 100%);
       color: #fff;
       height: 100vh;
       overflow: hidden;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      padding: 24px 36px;
+      padding: 22px 36px;
+      position: relative;
     }
 
-    /* Header Corporativo */
+    /* Partículas sutiles de fondo */
+    body::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(rgba(255,255,255,0.14) 1px, transparent 1px);
+      background-size: 36px 36px;
+      pointer-events: none;
+    }
+
     header {
       display: flex;
       justify-content: space-between;
@@ -42,24 +48,18 @@
     .brand-badge {
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 18px;
     }
 
-    .tigo-logo {
-      font-size: 2.4rem;
-      font-weight: 900;
-      letter-spacing: -1px;
-      color: #fff;
-      background: linear-gradient(135deg, #0052B4, var(--tigo-cyan));
-      padding: 6px 20px;
-      border-radius: 14px;
-      box-shadow: 0 6px 20px rgba(0, 200, 255, 0.35);
-      border: 2px solid rgba(255,255,255,0.25);
+    .tigo-header-logo {
+      height: 46px;
+      width: auto;
+      filter: drop-shadow(0 4px 12px rgba(0, 200, 255, 0.4));
     }
 
     .campaign-title h1 {
-      font-size: 1.8rem;
-      font-weight: 800;
+      font-size: 1.75rem;
+      font-weight: 900;
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
@@ -73,6 +73,7 @@
     .controls-top {
       display: flex;
       gap: 10px;
+      align-items: center;
     }
 
     .btn-mode {
@@ -82,8 +83,8 @@
       padding: 8px 16px;
       border-radius: 99px;
       cursor: pointer;
-      font-weight: 600;
-      font-size: 0.9rem;
+      font-weight: 700;
+      font-size: 0.88rem;
       transition: 0.2s;
     }
 
@@ -93,144 +94,163 @@
       border-color: var(--tigo-cyan);
     }
 
-    /* Escenario Central */
     main {
       display: grid;
-      grid-template-columns: 1.4fr 0.8fr;
+      grid-template-columns: 1.45fr 0.78fr;
       gap: 32px;
       align-items: center;
       flex: 1;
-      padding: 10px 0;
+      padding: 8px 0;
+      z-index: 5;
     }
 
-    /* El Horno Tigo */
+    /* Escenario Central */
     .stage-box {
-      background: rgba(0, 20, 50, 0.65);
-      border: 3px solid rgba(0, 200, 255, 0.35);
-      border-radius: 28px;
-      padding: 28px;
+      background: linear-gradient(180deg, rgba(0, 25, 65, 0.75) 0%, rgba(0, 15, 40, 0.88) 100%);
+      border: 3px solid rgba(0, 200, 255, 0.45);
+      border-radius: 30px;
+      padding: 24px 28px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       position: relative;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.45);
+      box-shadow: 0 25px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.2);
       height: 100%;
-      max-height: 620px;
+      max-height: 610px;
     }
 
     .timer-display {
-      font-size: 5.5rem;
+      font-size: 5.4rem;
       font-weight: 900;
       font-variant-numeric: tabular-nums;
       letter-spacing: 2px;
       color: var(--tigo-yellow);
-      text-shadow: 0 0 25px rgba(255, 209, 0, 0.5);
-      margin-bottom: 12px;
+      text-shadow: 0 0 30px rgba(255, 209, 0, 0.55);
+      line-height: 1;
+      margin-bottom: 10px;
     }
 
     .target-hint {
-      background: rgba(0, 200, 255, 0.18);
+      background: rgba(0, 200, 255, 0.16);
       border: 1px solid var(--tigo-cyan);
-      padding: 6px 20px;
+      padding: 6px 22px;
       border-radius: 99px;
-      font-size: 1.15rem;
+      font-size: 1.1rem;
       font-weight: 700;
-      margin-bottom: 18px;
+      margin-bottom: 16px;
     }
 
-    /* Interior del Horno */
+    /* Ventana del Horno */
     .oven-window {
       width: 100%;
-      max-width: 640px;
-      height: 270px;
-      background: linear-gradient(180deg, #2b1408 0%, #5c270c 100%);
-      border: 8px solid #1e293b;
-      border-radius: 20px;
+      max-width: 680px;
+      height: 295px;
+      background: radial-gradient(circle at 50% 60%, #7c2d12 0%, #3b1306 70%, #1c0903 100%);
+      border: 10px solid #1e293b;
+      border-radius: 24px;
       position: relative;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       overflow: hidden;
-      box-shadow: inset 0 0 50px rgba(255, 110, 20, 0.35);
-      transition: box-shadow 0.3s, background 0.3s;
+      box-shadow: inset 0 0 55px rgba(255, 115, 20, 0.4), 0 12px 30px rgba(0,0,0,0.5);
+      transition: all 0.3s ease;
+    }
+
+    /* Reflejo de cristal del horno */
+    .oven-window::after {
+      content: '';
+      position: absolute;
+      top: -40%;
+      left: -20%;
+      width: 140%;
+      height: 75%;
+      background: linear-gradient(180deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0) 100%);
+      transform: rotate(-8deg);
+      pointer-events: none;
     }
 
     .oven-window.heating {
-      box-shadow: inset 0 0 80px rgba(255, 80, 0, 0.85);
-      background: linear-gradient(180deg, #4a1905 0%, #9a3412 100%);
+      box-shadow: inset 0 0 95px rgba(255, 90, 0, 0.95), 0 0 35px rgba(255, 120, 0, 0.5);
+      background: radial-gradient(circle at 50% 60%, #c2410c 0%, #6b1d06 75%, #290b02 100%);
     }
 
     .oven-window.burned {
-      background: #18181b;
-      box-shadow: inset 0 0 60px rgba(0,0,0,0.95);
+      background: #141417;
+      box-shadow: inset 0 0 70px rgba(0,0,0,0.98);
     }
 
-    .cookies-tray {
+    /* Bandeja metálica */
+    .baking-tray {
+      background: linear-gradient(180deg, #475569 0%, #1e293b 100%);
+      border: 3px solid #64748b;
+      border-radius: 18px;
+      padding: 14px 24px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.65);
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 16px;
+      gap: 14px;
       z-index: 2;
-      transition: transform 0.3s, filter 0.3s;
+      transition: filter 0.3s;
     }
 
-    .oven-window.burned .cookies-tray {
-      filter: brightness(0.22) grayscale(1);
+    .oven-window.burned .baking-tray {
+      filter: brightness(0.2) grayscale(1);
     }
 
-    /* Galletas SVG Decoradas */
-    .cookie-item {
-      filter: drop-shadow(0 6px 8px rgba(0,0,0,0.5));
-      transition: transform 0.2s;
+    .cookie-svg {
+      filter: drop-shadow(0 6px 8px rgba(0,0,0,0.55));
     }
 
-    .heating .cookie-item {
-      animation: wobble 0.35s infinite alternate;
+    .heating .cookie-svg {
+      animation: bakePulse 0.35s infinite alternate ease-in-out;
     }
 
-    @keyframes wobble {
-      from { transform: rotate(-2deg) scale(1.01); }
-      to { transform: rotate(2deg) scale(1.03); }
+    @keyframes bakePulse {
+      from { transform: scale(1) rotate(-1.2deg); }
+      to { transform: scale(1.035) rotate(1.2deg); }
     }
 
-    /* Humo / Confeti */
     .smoke-overlay {
       position: absolute;
       inset: 0;
-      background: radial-gradient(circle, rgba(60,60,60,0.85) 20%, rgba(20,20,20,0.95) 100%);
+      background: radial-gradient(circle, rgba(45,45,50,0.88) 20%, rgba(15,15,18,0.96) 100%);
       display: none;
       align-items: center;
       justify-content: center;
-      font-size: 3rem;
+      font-size: 2.5rem;
       font-weight: 900;
-      color: #cbd5e1;
-      z-index: 5;
+      color: #e2e8f0;
+      z-index: 6;
+      text-align: center;
+      padding: 20px;
     }
 
-    /* Globo Carnaval (Modo 2) */
+    /* Modo Carnaval: Globo de Agua */
     .balloon-stage {
       display: none;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      height: 270px;
+      height: 295px;
       width: 100%;
     }
 
     .water-balloon {
-      width: 110px;
-      height: 130px;
-      background: radial-gradient(circle at 30% 30%, #67e8f9, #0284c7);
+      width: 115px;
+      height: 135px;
+      background: radial-gradient(circle at 30% 30%, #7dd3fc, #00C8FF 45%, #00377D 100%);
       border-radius: 50% 50% 50% 50% / 45% 45% 55% 55%;
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: 900;
-      font-size: 1.5rem;
+      font-size: 1.6rem;
       color: #fff;
-      box-shadow: 0 15px 35px rgba(0, 200, 255, 0.5);
+      box-shadow: 0 18px 40px rgba(0, 200, 255, 0.55);
       transition: transform 0.08s linear;
       position: relative;
     }
@@ -238,24 +258,24 @@
     .water-balloon::after {
       content: '';
       position: absolute;
-      bottom: -10px;
-      width: 20px;
-      height: 12px;
-      background: #0284c7;
+      bottom: -11px;
+      width: 22px;
+      height: 13px;
+      background: #00377D;
       clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%);
     }
 
-    /* Panel Lateral QR */
+    /* Panel QR Lateral */
     .qr-card {
-      background: #fff;
+      background: #ffffff;
       color: var(--tigo-dark);
       border-radius: 28px;
-      padding: 28px;
+      padding: 26px 24px;
       display: flex;
       flex-direction: column;
       align-items: center;
       text-align: center;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+      box-shadow: 0 25px 55px rgba(0,0,0,0.45);
     }
 
     .qr-card .pill {
@@ -264,13 +284,13 @@
       font-weight: 900;
       padding: 6px 18px;
       border-radius: 99px;
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       text-transform: uppercase;
       margin-bottom: 12px;
     }
 
     .qr-card h2 {
-      font-size: 1.65rem;
+      font-size: 1.55rem;
       font-weight: 900;
       line-height: 1.2;
       margin-bottom: 10px;
@@ -278,13 +298,14 @@
     }
 
     .qr-card p {
-      font-size: 1rem;
+      font-size: 0.98rem;
       color: #475569;
-      margin-bottom: 18px;
+      margin-bottom: 16px;
+      line-height: 1.4;
     }
 
     #qrcode {
-      padding: 14px;
+      padding: 12px;
       background: #fff;
       border: 4px solid var(--tigo-cyan);
       border-radius: 20px;
@@ -292,7 +313,7 @@
     }
 
     .room-code {
-      font-size: 1.1rem;
+      font-size: 1rem;
       font-weight: 800;
       color: var(--tigo-blue);
       background: #eff6ff;
@@ -301,19 +322,19 @@
     }
 
     .status-banner {
-      margin-top: 14px;
-      font-size: 0.95rem;
+      margin-top: 12px;
+      font-size: 0.92rem;
       font-weight: 700;
       color: #059669;
     }
 
-    /* Banner de Resultado */
+    /* Modal Resultado */
     .result-modal {
       position: absolute;
       inset: 16px;
-      background: rgba(0, 30, 68, 0.96);
+      background: rgba(0, 26, 62, 0.97);
       border: 3px solid var(--tigo-yellow);
-      border-radius: 22px;
+      border-radius: 24px;
       display: none;
       flex-direction: column;
       align-items: center;
@@ -323,15 +344,15 @@
       z-index: 20;
     }
 
-    .result-modal h3 { font-size: 2.6rem; color: var(--tigo-yellow); margin-bottom: 8px; }
-    .result-modal p { font-size: 1.35rem; max-width: 520px; margin-bottom: 20px; }
+    .result-modal h3 { font-size: 2.5rem; color: var(--tigo-yellow); margin-bottom: 10px; }
+    .result-modal p { font-size: 1.3rem; max-width: 540px; margin-bottom: 22px; line-height: 1.4; }
     .btn-reset {
       background: var(--tigo-cyan);
       color: var(--tigo-dark);
       border: none;
-      padding: 12px 28px;
+      padding: 13px 30px;
       font-size: 1.1rem;
-      font-weight: 800;
+      font-weight: 900;
       border-radius: 99px;
       cursor: pointer;
     }
@@ -340,16 +361,45 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 0.9rem;
-      color: rgba(255,255,255,0.75);
+      font-size: 0.88rem;
+      color: rgba(255,255,255,0.8);
+      z-index: 10;
     }
+
+    .btn-csv {
+      background: rgba(255,255,255,0.14);
+      border: 1px solid rgba(255,255,255,0.3);
+      color: #fff;
+      padding: 5px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 0.82rem;
+    }
+
+    .btn-csv:hover { background: var(--tigo-yellow); color: var(--tigo-dark); }
   </style>
 </head>
 <body>
 
   <header>
     <div class="brand-badge">
-      <div class="tigo-logo">tigo</div>
+      <!-- Logotipo Oficial Tigo Vectorizado en Blanco -->
+      <svg class="tigo-header-logo" viewBox="0 0 260 175" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Letra t -->
+        <path d="M18 14 C18 7 24 3 31 3 C38 3 43 7 43 14 V38 H56 C62 38 66 42 66 48 C66 54 62 58 56 58 H43 V96 C43 105 47 109 55 109 C58 109 61 108 63 108 C68 108 71 112 71 117 C71 123 65 128 52 128 C28 128 18 116 18 95 V58 H11 C5 58 1 54 1 48 C1 42 5 38 11 38 H18 V14 Z" fill="#FFFFFF"/>
+        <!-- Letra i -->
+        <circle cx="88" cy="18" r="13" fill="#FFFFFF"/>
+        <rect x="76" y="38" width="24" height="88" rx="12" fill="#FFFFFF"/>
+        <!-- Letra g -->
+        <path d="M168 48 C168 41 163 37 156 37 C151 37 148 39 146 43 C141 38 134 36 126 36 C103 36 88 53 88 78 C88 102 103 118 125 118 C133 118 140 115 145 110 V116 C145 128 137 135 124 135 C115 135 109 132 104 129 C99 127 94 129 92 134 C90 139 92 144 98 147 C106 152 115 154 126 154 C153 154 168 139 168 114 V48 Z M128 98 C116 98 109 89 109 77 C109 65 116 56 128 56 C139 56 146 65 146 77 C146 89 139 98 128 98 Z" fill="#FFFFFF"/>
+        <!-- Arco superior sobre la o -->
+        <path d="M189 22 C202 8 232 8 245 22 C249 26 248 32 243 35 C239 38 234 36 230 33 C221 25 213 25 204 33 C200 36 195 38 191 35 C186 32 185 26 189 22 Z" fill="#FFFFFF"/>
+        <!-- Letra o -->
+        <path d="M217 36 C192 36 175 54 175 80 C175 106 192 124 217 124 C242 124 259 106 259 80 C259 54 242 36 217 36 Z M217 103 C204 103 196 93 196 80 C196 67 204 57 217 57 C230 57 238 67 238 80 C238 93 230 103 217 103 Z" fill="#FFFFFF"/>
+        <!-- Sonrisa inferior -->
+        <path d="M126 138 C148 164 195 166 221 141 C226 136 233 137 236 142 C239 147 237 153 231 158 C196 188 141 185 113 151 C109 146 110 140 115 137 C119 134 123 135 126 138 Z" fill="#FFFFFF"/>
+      </svg>
       <div class="campaign-title">
         <h1 id="mainHeadline">Salva las Galletas Tigo</h1>
         <p id="subHeadline">Detén el horno en el segundo 10.00 exacto y llévate tu regalo</p>
@@ -363,68 +413,96 @@
   </header>
 
   <main>
-    <!-- Escenario del Juego -->
     <section class="stage-box">
       <div class="timer-display" id="timerDisplay">00.000</div>
       <div class="target-hint" id="targetHint">🎯 Meta exacta: <strong>10.000 seg</strong> (Rango ganador: 09.800 - 10.200)</div>
 
-      <!-- MODO NAVIDAD: HORNO CON GALLETAS T-I-G-O DECORADAS -->
+      <!-- HORNO CON GALLETAS OFICIALES TIGO EN JENGIBRE DECORADO -->
       <div class="oven-window" id="ovenWindow">
-        <div class="cookies-tray" id="cookiesTray">
+        <div class="baking-tray">
           <!-- Hombrecito de Jengibre -->
-          <svg class="cookie-item" width="78" height="96" viewBox="0 0 100 120">
-            <circle cx="50" cy="24" r="18" fill="#C67D3B" stroke="#8D511E" stroke-width="3"/>
-            <path d="M22 48 L78 48 L72 64 L62 62 L68 108 L52 108 L50 82 L48 108 L32 108 L38 62 L28 64 Z" fill="#C67D3B" stroke="#8D511E" stroke-width="3" stroke-linejoin="round"/>
-            <!-- Glaseado blanco y azul Tigo -->
+          <svg class="cookie-svg" width="76" height="96" viewBox="0 0 100 120">
+            <circle cx="50" cy="24" r="18" fill="#C67D3B" stroke="#783F12" stroke-width="3.5"/>
+            <path d="M22 48 L78 48 L72 64 L62 62 L68 108 L52 108 L50 82 L48 108 L32 108 L38 62 L28 64 Z" fill="#C67D3B" stroke="#783F12" stroke-width="3.5" stroke-linejoin="round"/>
             <circle cx="44" cy="20" r="3" fill="#fff"/>
             <circle cx="56" cy="20" r="3" fill="#fff"/>
             <path d="M43 29 Q50 36 57 29" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"/>
-            <circle cx="50" cy="56" r="4" fill="#00C8FF"/>
-            <circle cx="50" cy="70" r="4" fill="#FFD100"/>
+            <circle cx="50" cy="57" r="4.5" fill="#00C8FF"/>
+            <circle cx="50" cy="72" r="4.5" fill="#FFD100"/>
           </svg>
 
-          <!-- Letras T - I - G - O en Galleta de Jengibre Decorada -->
-          <svg class="cookie-item" width="330" height="105" viewBox="0 0 360 110">
-            <!-- Galleta T -->
-            <g transform="translate(8,10)">
-              <path d="M5 10 H75 V28 H50 V90 H30 V28 H5 Z" fill="#C67D3B" stroke="#8D511E" stroke-width="4" stroke-linejoin="round"/>
-              <path d="M12 19 H68 M40 24 V82" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round"/>
-              <circle cx="40" cy="19" r="4" fill="#00C8FF"/>
-            </g>
-            <!-- Galleta I -->
-            <g transform="translate(95,10)">
-              <rect x="22" y="10" width="26" height="80" rx="8" fill="#C67D3B" stroke="#8D511E" stroke-width="4"/>
-              <line x1="35" y1="20" x2="35" y2="80" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round"/>
-              <circle cx="35" cy="16" r="4" fill="#FFD100"/>
-            </g>
-            <!-- Galleta G -->
-            <g transform="translate(160,10)">
-              <path d="M72 30 C64 12, 22 12, 14 48 C8 82, 42 94, 68 82 V52 H44 V68 H52 V74 C40 78, 28 70, 30 48 C32 28, 54 26, 60 36 Z" fill="#C67D3B" stroke="#8D511E" stroke-width="4" stroke-linejoin="round"/>
-              <path d="M62 28 C50 18, 24 22, 22 50 C20 76, 46 82, 60 74" stroke="#FFFFFF" stroke-width="4" fill="none" stroke-linecap="round"/>
-            </g>
-            <!-- Galleta O -->
-            <g transform="translate(250,10)">
-              <circle cx="45" cy="50" r="38" fill="#C67D3B" stroke="#8D511E" stroke-width="4"/>
-              <circle cx="45" cy="50" r="15" fill="#4a1905" stroke="#8D511E" stroke-width="3"/>
-              <circle cx="45" cy="50" r="27" stroke="#FFFFFF" stroke-width="4" stroke-dasharray="10 8" fill="none"/>
+          <!-- GALLETAS DE JENGIBRE CON LA FORMA EXACTA DEL LOGO TIGO (t-i-g-o + arco + sonrisa) -->
+          <svg class="cookie-svg" width="350" height="215" viewBox="0 0 280 185" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <!-- Degradado horneado de galleta de jengibre -->
+              <linearGradient id="gingerGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#D98A42"/>
+                <stop offset="65%" stop-color="#BD6E28"/>
+                <stop offset="100%" stop-color="#8F4C14"/>
+              </linearGradient>
+            </defs>
+
+            <g transform="translate(10, 4)">
+              <!-- Galleta 't' -->
+              <g>
+                <path d="M18 14 C18 7 24 3 31 3 C38 3 43 7 43 14 V38 H56 C62 38 66 42 66 48 C66 54 62 58 56 58 H43 V96 C43 105 47 109 55 109 C58 109 61 108 63 108 C68 108 71 112 71 117 C71 123 65 128 52 128 C28 128 18 116 18 95 V58 H11 C5 58 1 54 1 48 C1 42 5 38 11 38 H18 V14 Z" fill="url(#gingerGrad)" stroke="#6B340A" stroke-width="3.5"/>
+                <!-- Glaseado blanco interno -->
+                <path d="M30.5 14 V96 C30.5 112 38 118 54 118 M12 48 H55" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round" fill="none"/>
+                <circle cx="30.5" cy="48" r="4" fill="#00C8FF"/>
+              </g>
+
+              <!-- Galleta 'i' (punto + cuerpo) -->
+              <g>
+                <circle cx="88" cy="18" r="13.5" fill="url(#gingerGrad)" stroke="#6B340A" stroke-width="3.5"/>
+                <circle cx="88" cy="18" r="6" fill="#FFFFFF"/>
+                <rect x="75.5" y="38" width="25" height="88" rx="12.5" fill="url(#gingerGrad)" stroke="#6B340A" stroke-width="3.5"/>
+                <line x1="88" y1="49" x2="88" y2="115" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round"/>
+              </g>
+
+              <!-- Galleta 'g' redondeada oficial -->
+              <g>
+                <path d="M168 48 C168 41 163 37 156 37 C151 37 148 39 146 43 C141 38 134 36 126 36 C103 36 88 53 88 78 C88 102 103 118 125 118 C133 118 140 115 145 110 V116 C145 128 137 135 124 135 C115 135 109 132 104 129 C99 127 94 129 92 134 C90 139 92 144 98 147 C106 152 115 154 126 154 C153 154 168 139 168 114 V48 Z M128 98 C116 98 109 89 109 77 C109 65 116 56 128 56 C139 56 146 65 146 77 C146 89 139 98 128 98 Z" fill="url(#gingerGrad)" stroke="#6B340A" stroke-width="3.5"/>
+                <!-- Glaseado decorativo sobre la 'g' -->
+                <path d="M156 48 V114 C156 134 144 144 125 144 C115 144 107 141 102 138" stroke="#FFFFFF" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+                <circle cx="128" cy="77" r="26" stroke="#FFFFFF" stroke-width="3.5" stroke-dasharray="8 6" fill="none"/>
+              </g>
+
+              <!-- Galleta Arco Superior sobre la 'o' -->
+              <g>
+                <path d="M189 22 C202 8 232 8 245 22 C249 26 248 32 243 35 C239 38 234 36 230 33 C221 25 213 25 204 33 C200 36 195 38 191 35 C186 32 185 26 189 22 Z" fill="url(#gingerGrad)" stroke="#6B340A" stroke-width="3.2"/>
+                <path d="M196 26 C207 16 227 16 238 26" stroke="#00C8FF" stroke-width="4" stroke-linecap="round" fill="none"/>
+              </g>
+
+              <!-- Galleta 'o' -->
+              <g>
+                <path d="M217 36 C192 36 175 54 175 80 C175 106 192 124 217 124 C242 124 259 106 259 80 C259 54 242 36 217 36 Z M217 103 C204 103 196 93 196 80 C196 67 204 57 217 57 C230 57 238 67 238 80 C238 93 230 103 217 103 Z" fill="url(#gingerGrad)" stroke="#6B340A" stroke-width="3.5"/>
+                <circle cx="217" cy="80" r="31.5" stroke="#FFFFFF" stroke-width="4.5" fill="none"/>
+              </g>
+
+              <!-- Galleta Sonrisa Inferior -->
+              <g>
+                <path d="M126 138 C148 164 195 166 221 141 C226 136 233 137 236 142 C239 147 237 153 231 158 C196 188 141 185 113 151 C109 146 110 140 115 137 C119 134 123 135 126 138 Z" fill="url(#gingerGrad)" stroke="#6B340A" stroke-width="3.2"/>
+                <path d="M121 145 C147 174 196 175 227 148" stroke="#FFD100" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+              </g>
             </g>
           </svg>
 
           <!-- Arbolito de Jengibre -->
-          <svg class="cookie-item" width="84" height="98" viewBox="0 0 100 115">
-            <polygon points="50,8 20,45 34,45 14,75 30,75 10,100 90,100 70,75 86,75 66,45 80,45" fill="#C67D3B" stroke="#8D511E" stroke-width="3" stroke-linejoin="round"/>
+          <svg class="cookie-svg" width="80" height="96" viewBox="0 0 100 115">
+            <polygon points="50,8 20,45 34,45 14,75 30,75 10,100 90,100 70,75 86,75 66,45 80,45" fill="#C67D3B" stroke="#783F12" stroke-width="3.5" stroke-linejoin="round"/>
             <path d="M35 42 Q50 50 65 42 M26 72 Q50 82 74 72" stroke="#fff" stroke-width="3.5" fill="none" stroke-linecap="round"/>
-            <circle cx="50" cy="14" r="5" fill="#FFD100"/>
-            <circle cx="42" cy="58" r="3.5" fill="#00C8FF"/>
-            <circle cx="58" cy="86" r="3.5" fill="#00C8FF"/>
+            <circle cx="50" cy="14" r="5.5" fill="#FFD100"/>
+            <circle cx="42" cy="58" r="4" fill="#00C8FF"/>
+            <circle cx="58" cy="86" r="4" fill="#00C8FF"/>
           </svg>
         </div>
+
         <div class="smoke-overlay" id="smokeOverlay">💨 ¡SE QUEMARON LAS GALLETAS!</div>
       </div>
 
       <!-- MODO CARNAVAL: GLOBO DE AGUA -->
       <div class="balloon-stage" id="balloonStage">
-        <div class="water-balloon" id="waterBalloon">TIGO</div>
+        <div class="water-balloon" id="waterBalloon">tigo</div>
       </div>
 
       <!-- Modal Resultado -->
@@ -441,25 +519,35 @@
       <h2>Escanea y convierte tu cel en el botón mágico</h2>
       <p>1. Apunta tu cámara al QR<br>2. Inicia y frena el horno desde tu pantalla</p>
       <div id="qrcode"></div>
-      <div class="room-code" id="roomLabel">Conectando sala...</div>
+      <div class="room-code" id="roomLabel">Oficina: Cargando...</div>
       <div class="status-banner" id="connStatus">🟢 Listo para escanear</div>
     </aside>
   </main>
 
   <footer>
-    <span>Activación Drive-to-Store • Eje Troncal Bolivia</span>
-    <span>Presiona <strong>ESPACIO</strong> en teclado para demostración local sin celular</span>
+    <span>Activación Oficial • Eje Troncal Bolivia (<strong id="leadsCount">0</strong> leads hoy)</span>
+    <div style="display:flex; gap:10px; align-items:center;">
+      <span>Tecla <strong>ESPACIO</strong> para demo</span>
+      <button class="btn-csv" onclick="exportBranchCSV()">📥 Descargar Excel / CSV</button>
+    </div>
   </footer>
 
   <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const branchName = (urlParams.get('tienda') || 'DEMO-CENTRAL').toUpperCase();
+    const roomId = `TIGO-${branchName}-${Math.floor(100 + Math.random() * 899)}`;
+    let storeLeads = JSON.parse(localStorage.getItem(`leads_${branchName}`) || '[]');
+
     let theme = 'navidad';
     let state = 'IDLE'; // IDLE, RUNNING, FINISHED
     let startTime = 0;
     let rafId = null;
     let activeConn = null;
-    let roomId = 'TIGO-' + Math.floor(1000 + Math.random() * 9000);
 
-    // Síntesis de sonido 100% offline (Costo cero)
+    document.getElementById('roomLabel').innerText = `Oficina: ${branchName}`;
+    document.getElementById('leadsCount').innerText = storeLeads.length;
+
+    // Audio sintetizado offline
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     function playTone(freq, type, duration) {
       if (audioCtx.state === 'suspended') audioCtx.resume();
@@ -475,43 +563,45 @@
       osc.stop(audioCtx.currentTime + duration);
     }
 
-    // Construir URL del control remoto apuntando al mismo dominio/carpeta
+    // URL dinámica apuntando al control móvil de esta oficina específica
     const baseUrl = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
     const controlUrl = `${baseUrl}control.html?room=${roomId}&theme=${theme}`;
 
-    // Generar QR en pantalla
-    const qrContainer = document.getElementById('qrcode');
-    let qr = new QRCode(qrContainer, {
+    new QRCode(document.getElementById('qrcode'), {
       text: controlUrl,
-      width: 210,
-      height: 210,
+      width: 205,
+      height: 205,
       colorDark: "#001E44",
       colorLight: "#ffffff",
       correctLevel: QRCode.CorrectLevel.M
     });
 
-    // Conexión P2P Gratuita (PeerJS) + BroadcastChannel local
-    const bc = new BroadcastChannel('tigo_game_channel');
+    const bc = new BroadcastChannel(`tigo_channel_${branchName}`);
     bc.onmessage = (e) => handleRemoteCommand(e.data);
 
     const peer = new Peer(roomId);
-    peer.on('open', (id) => {
-      document.getElementById('roomLabel').innerText = `Sala Tienda: ${id}`;
-    });
-
     peer.on('connection', (conn) => {
+      // Bloqueo anti-cruce si ya hay alguien jugando activamente
+      if (state === 'RUNNING') {
+        conn.on('open', () => conn.send({ type: 'BUSY' }));
+        return;
+      }
       activeConn = conn;
       document.getElementById('connStatus').innerText = '📱 ¡Cliente conectado! Listo para jugar';
       conn.on('data', (data) => handleRemoteCommand(data));
-      conn.on('open', () => {
-        conn.send({ type: 'SYNC_THEME', theme });
-      });
+      conn.on('open', () => conn.send({ type: 'SYNC_THEME', theme }));
     });
 
     function handleRemoteCommand(data) {
-      if (data.type === 'START') startGame();
-      if (data.type === 'STOP') stopGame(data.elapsed);
+      if (data.type === 'START' && state === 'IDLE') startGame();
+      if (data.type === 'STOP' && state === 'RUNNING') stopGame(data.elapsed);
       if (data.type === 'RESET') resetGame();
+      if (data.type === 'NEW_LEAD') {
+        const record = { sucursal: branchName, ...data };
+        storeLeads.push(record);
+        localStorage.setItem(`leads_${branchName}`, JSON.stringify(storeLeads));
+        document.getElementById('leadsCount').innerText = storeLeads.length;
+      }
     }
 
     function setTheme(newTheme) {
@@ -554,7 +644,6 @@
         document.getElementById('waterBalloon').style.transform = `scale(${scale})`;
       }
 
-      // Auto-fallo si pasa de 12.5 segundos sin detener
       if (elapsed >= 12.5) {
         stopGame(elapsed);
         return;
@@ -567,7 +656,6 @@
       state = 'FINISHED';
       cancelAnimationFrame(rafId);
 
-      // Si el celular envió su tiempo exacto sin latencia, usamos ese; si no, el local
       const finalTime = remoteElapsed ? parseFloat(remoteElapsed) : (performance.now() - startTime) / 1000;
       document.getElementById('timerDisplay').innerText = finalTime.toFixed(3).padStart(6, '0');
       document.getElementById('ovenWindow').classList.remove('heating');
@@ -595,8 +683,10 @@
         } else {
           title = theme === 'navidad' ? '💨 ¡SE QUEMARON LAS GALLETAS!' : '💥 ¡EXPLOTÓ EL GLOBO!';
           msg = `Te pasaste (${finalTime.toFixed(3)}s). ¡Igual ganaste 2GB GRATIS de consuelo!`;
-          if (theme === 'navidad') document.getElementById('ovenWindow').classList.add('burned');
-          if (theme === 'navidad') document.getElementById('smokeOverlay').style.display = 'flex';
+          if (theme === 'navidad') {
+            document.getElementById('ovenWindow').classList.add('burned');
+            document.getElementById('smokeOverlay').style.display = 'flex';
+          }
         }
         playTone(180, 'sawtooth', 0.35);
       }
@@ -618,11 +708,25 @@
       document.getElementById('smokeOverlay').style.display = 'none';
       document.getElementById('waterBalloon').style.transform = 'scale(1)';
       document.getElementById('resultModal').style.display = 'none';
+      document.getElementById('connStatus').innerText = '🟢 Listo para escanear';
     }
 
     function simulateAction() {
       if (state === 'IDLE' || state === 'FINISHED') startGame();
       else if (state === 'RUNNING') stopGame();
+    }
+
+    function exportBranchCSV() {
+      if (!storeLeads.length) return alert(`Aún no hay leads registrados en ${branchName}.`);
+      const headers = ['Sucursal,Fecha_Hora,Nombre,Celular,Operador,Interes,Tiempo,Campana'];
+      const rows = storeLeads.map(l =>
+        `"${l.sucursal}","${l.timestamp}","${l.name}","${l.phone}","${l.operator}","${l.interest}","${l.time}","${l.theme}"`
+      );
+      const blob = new Blob([headers.concat(rows).join('\n')], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `Leads_Tigo_${branchName}_${new Date().toISOString().slice(0,10)}.csv`;
+      link.click();
     }
 
     window.addEventListener('keydown', (e) => {
