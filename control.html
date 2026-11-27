@@ -211,8 +211,9 @@
     footer {
       text-align: center;
       font-size: 0.78rem;
-      color: rgba(255,255,255,0.6);
+      color: rgba(255,255,255,0.65);
       padding-top: 12px;
+      font-weight: 600;
     }
   </style>
 </head>
@@ -224,18 +225,18 @@
   </header>
 
   <main class="game-pad" id="padView">
-    <p class="instruction" id="instructionText">Mira la pantalla de la tienda y toca para encender el horno</p>
+    <p class="instruction" id="instructionText">Mira la pantalla y toca para encender el horno</p>
     <button class="magic-btn" id="magicBtn" onclick="handleTap()">
       <span class="icon" id="btnIcon">🔥</span>
       <span id="btnText">ENCENDER HORNO</span>
     </button>
-    <p style="font-size: 0.85rem; opacity: 0.8;">Meta: Detenerlo en <strong>10.000 seg</strong></p>
+    <p style="font-size: 0.85rem; opacity: 0.85;">Meta: Detenerlo en <strong>10.000 seg</strong></p>
   </main>
 
   <section class="lead-card" id="leadView">
     <span class="result-badge" id="timeBadge">Tiempo: 09.985s</span>
     <h2 id="resultHeading">¡Salvaste las Galletas!</h2>
-    <p>Ingresa tus datos para habilitar tu regalo al instante con nuestro anfitrión:</p>
+    <p>Completa tus datos para habilitar tu regalo con nuestro anfitrión:</p>
 
     <form id="leadForm" onsubmit="submitLead(event)">
       <div class="form-group">
@@ -264,21 +265,21 @@
           <option value="Renovar Equipo">Renovar Smartphone</option>
         </select>
       </div>
-      <button type="submit" class="btn-claim">🎁 RECLAMAR MI REGALO AHORA</button>
+      <button type="submit" class="btn-claim">🎁 RECLAMAR MI REGALO</button>
     </form>
   </section>
 
   <section class="voucher-view" id="voucherView">
     <div style="font-size: 3.5rem; margin-bottom: 8px;">✅</div>
     <h2>¡Premio Habilitado!</h2>
-    <p style="color:#475569; margin-top:4px;">Muestra esta pantalla al anfitrión Tigo en la entrada para recibir tu regalo:</p>
+    <p style="color:#475569; margin-top:4px;">Muestra esta pantalla al anfitrión Tigo para recibir tu regalo:</p>
     <div class="voucher-code" id="voucherCode">TG-8492</div>
     <p id="voucherSummary" style="font-size:0.9rem; font-weight:700; color:#00377D;"></p>
     <button class="btn-again" onclick="playAgain()">Jugar otra vez</button>
   </section>
 
   <footer>
-    Activación Oficial • Sin ficha ni esperas
+    Activación Oficial Tigo
   </footer>
 
   <script>
@@ -312,7 +313,7 @@
         if (theme === 'navidad') {
           icon.innerText = '🔥';
           text.innerText = 'ENCENDER HORNO';
-          instr.innerText = 'Mira la pantalla de la tienda y toca para empezar';
+          instr.innerText = 'Mira la pantalla y toca para encender el horno';
         } else {
           icon.innerText = '🚰';
           text.innerText = 'ABRIR EL GRIFO';
@@ -327,7 +328,7 @@
         } else {
           icon.innerText = '🚱';
           text.innerText = '¡CERRAR GRIFO!';
-          instr.innerText = '¡Cierra el grifo antes de los 10.000 seg o te mojas!';
+          instr.innerText = '¡Cierra el grifo antes de los 10.000 seg o revienta!';
         }
       }
     }
