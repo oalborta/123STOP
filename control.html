@@ -32,9 +32,11 @@
       align-items: center;
     }
 
-    .logo-svg {
-      height: 34px;
+    .logo-img {
+      height: 36px;
       width: auto;
+      object-fit: contain;
+      display: block;
     }
 
     .conn-pill {
@@ -217,15 +219,7 @@
 <body>
 
   <header>
-    <svg class="logo-svg" viewBox="0 0 260 175" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M18 14 C18 7 24 3 31 3 C38 3 43 7 43 14 V38 H56 C62 38 66 42 66 48 C66 54 62 58 56 58 H43 V96 C43 105 47 109 55 109 C58 109 61 108 63 108 C68 108 71 112 71 117 C71 123 65 128 52 128 C28 128 18 116 18 95 V58 H11 C5 58 1 54 1 48 C1 42 5 38 11 38 H18 V14 Z" fill="#FFFFFF"/>
-      <circle cx="88" cy="18" r="13" fill="#FFFFFF"/>
-      <rect x="76" y="38" width="24" height="88" rx="12" fill="#FFFFFF"/>
-      <path d="M168 48 C168 41 163 37 156 37 C151 37 148 39 146 43 C141 38 134 36 126 36 C103 36 88 53 88 78 C88 102 103 118 125 118 C133 118 140 115 145 110 V116 C145 128 137 135 124 135 C115 135 109 132 104 129 C99 127 94 129 92 134 C90 139 92 144 98 147 C106 152 115 154 126 154 C153 154 168 139 168 114 V48 Z M128 98 C116 98 109 89 109 77 C109 65 116 56 128 56 C139 56 146 65 146 77 C146 89 139 98 128 98 Z" fill="#FFFFFF"/>
-      <path d="M189 22 C202 8 232 8 245 22 C249 26 248 32 243 35 C239 38 234 36 230 33 C221 25 213 25 204 33 C200 36 195 38 191 35 C186 32 185 26 189 22 Z" fill="#FFFFFF"/>
-      <path d="M217 36 C192 36 175 54 175 80 C175 106 192 124 217 124 C242 124 259 106 259 80 C259 54 242 36 217 36 Z M217 103 C204 103 196 93 196 80 C196 67 204 57 217 57 C230 57 238 67 238 80 C238 93 230 103 217 103 Z" fill="#FFFFFF"/>
-      <path d="M126 138 C148 164 195 166 221 141 C226 136 233 137 236 142 C239 147 237 153 231 158 C196 188 141 185 113 151 C109 146 110 140 115 137 C119 134 123 135 126 138 Z" fill="#FFFFFF"/>
-    </svg>
+    <img class="logo-img" src="logo-tigo.png" alt="Tigo" onerror="tryNextLogoExt(this)" />
     <div class="conn-pill" id="statusBadge">🟡 Conectando...</div>
   </header>
 
@@ -288,6 +282,18 @@
   </footer>
 
   <script>
+    const logoFallbacks = [
+      'logo-tigo.PNG',
+      'LOGO%20TIGO%20BLANCO_2.png',
+      'LOGO%20TIGO%20BLANCO.png'
+    ];
+    let logoTryIdx = 0;
+    function tryNextLogoExt(imgEl) {
+      if (logoTryIdx < logoFallbacks.length) {
+        imgEl.src = logoFallbacks[logoTryIdx++];
+      }
+    }
+
     const params = new URLSearchParams(window.location.search);
     const roomId = params.get('room');
     let theme = params.get('theme') || 'navidad';
