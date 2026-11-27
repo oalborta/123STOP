@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tigo Juega - Pantalla Tienda</title>
+  <!-- Librerías gratuitas CDN: QRCode y PeerJS (WebRTC P2P costo cero) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+  <style>
+    :root {
+      --tigo-blue: #00377D;
+      --tigo-dark: #001E44;
+      --tigo-cyan: #00C8FF;
+      --tigo-yellow: #FFD100;
+      --ginger: #C67D3B;
+      --ginger-dark: #8D511E;
+      --ginger-burn: #2D241E;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
+
+    body {
+      background: radial-gradient(circle at center, var(--tigo-blue) 0%, var(--tigo-dark) 100%);
+      color: #fff;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 24px 36px;
+    }
+
+    /* Header Corporativo */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 10;
+    }
+
+    .brand-badge {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .tigo-logo {
+      font-size: 2.4rem;
+      font-weight: 900;
+      letter-spacing: -1px;
+      color: #fff;
+      background: linear-gradient(135deg, #0052B4, var(--tigo-cyan));
+      padding: 6px 20px;
+      border-radius: 14px;
+      box-shadow: 0 6px 20px rgba(0, 200, 255, 0.35);
+      border: 2px solid rgba(255,255,255,0.25);
+    }
+
+    .campaign-title h1 {
+      font-size: 1.8rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .campaign-title p {
+      color: var(--tigo-cyan);
+      font-size: 1.05rem;
+      font-weight: 600;
+    }
+
+    .controls-top {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn-mode {
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.3);
+      color: #fff;
+      padding: 8px 16px;
+      border-radius: 99px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: 0.2s;
+    }
+
+    .btn-mode.active, .btn-mode:hover {
+      background: var(--tigo-cyan);
+      color: var(--tigo-dark);
+      border-color: var(--tigo-cyan);
+    }
+
+    /* Escenario Central */
+    main {
+      display: grid;
+      grid-template-columns: 1.4fr 0.8fr;
+      gap: 32px;
+      align-items: center;
+      flex: 1;
+      padding: 10px 0;
+    }
+
+    /* El Horno Tigo */
+    .stage-box {
+      background: rgba(0, 20, 50, 0.65);
+      border: 3px solid rgba(0, 200, 255, 0.35);
+      border-radius: 28px;
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.45);
+      height: 100%;
+      max-height: 620px;
+    }
+
+    .timer-display {
+      font-size: 5.5rem;
+      font-weight: 900;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 2px;
+      color: var(--tigo-yellow);
+      text-shadow: 0 0 25px rgba(255, 209, 0, 0.5);
+      margin-bottom: 12px;
+    }
+
+    .target-hint {
+      background: rgba(0, 200, 255, 0.18);
+      border: 1px solid var(--tigo-cyan);
+      padding: 6px 20px;
+      border-radius: 99px;
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 18px;
+    }
+
+    /* Interior del Horno */
+    .oven-window {
+      width: 100%;
+      max-width: 640px;
+      height: 270px;
+      background: linear-gradient(180deg, #2b1408 0%, #5c270c 100%);
+      border: 8px solid #1e293b;
+      border-radius: 20px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      box-shadow: inset 0 0 50px rgba(255, 110, 20, 0.35);
+      transition: box-shadow 0.3s, background 0.3s;
+    }
+
+    .oven-window.heating {
+      box-shadow: inset 0 0 80px rgba(255, 80, 0, 0.85);
+      background: linear-gradient(180deg, #4a1905 0%, #9a3412 100%);
+    }
+
+    .oven-window.burned {
+      background: #18181b;
+      box-shadow: inset 0 0 60px rgba(0,0,0,0.95);
+    }
+
+    .cookies-tray {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      z-index: 2;
+      transition: transform 0.3s, filter 0.3s;
+    }
+
+    .oven-window.burned .cookies-tray {
+      filter: brightness(0.22) grayscale(1);
+    }
+
+    /* Galletas SVG Decoradas */
+    .cookie-item {
+      filter: drop-shadow(0 6px 8px rgba(0,0,0,0.5));
+      transition: transform 0.2s;
+    }
+
+    .heating .cookie-item {
+      animation: wobble 0.35s infinite alternate;
+    }
+
+    @keyframes wobble {
+      from { transform: rotate(-2deg) scale(1.01); }
+      to { transform: rotate(2deg) scale(1.03); }
+    }
+
+    /* Humo / Confeti */
+    .smoke-overlay {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle, rgba(60,60,60,0.85) 20%, rgba(20,20,20,0.95) 100%);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      font-weight: 900;
+      color: #cbd5e1;
+      z-index: 5;
+    }
+
+    /* Globo Carnaval (Modo 2) */
+    .balloon-stage {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 270px;
+      width: 100%;
+    }
+
+    .water-balloon {
+      width: 110px;
+      height: 130px;
+      background: radial-gradient(circle at 30% 30%, #67e8f9, #0284c7);
+      border-radius: 50% 50% 50% 50% / 45% 45% 55% 55%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 1.5rem;
+      color: #fff;
+      box-shadow: 0 15px 35px rgba(0, 200, 255, 0.5);
+      transition: transform 0.08s linear;
+      position: relative;
+    }
+
+    .water-balloon::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      width: 20px;
+      height: 12px;
+      background: #0284c7;
+      clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%);
+    }
+
+    /* Panel Lateral QR */
+    .qr-card {
+      background: #fff;
+      color: var(--tigo-dark);
+      border-radius: 28px;
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+    }
+
+    .qr-card .pill {
+      background: var(--tigo-yellow);
+      color: var(--tigo-dark);
+      font-weight: 900;
+      padding: 6px 18px;
+      border-radius: 99px;
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .qr-card h2 {
+      font-size: 1.65rem;
+      font-weight: 900;
+      line-height: 1.2;
+      margin-bottom: 10px;
+      color: var(--tigo-blue);
+    }
+
+    .qr-card p {
+      font-size: 1rem;
+      color: #475569;
+      margin-bottom: 18px;
+    }
+
+    #qrcode {
+      padding: 14px;
+      background: #fff;
+      border: 4px solid var(--tigo-cyan);
+      border-radius: 20px;
+      margin-bottom: 14px;
+    }
+
+    .room-code {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--tigo-blue);
+      background: #eff6ff;
+      padding: 6px 16px;
+      border-radius: 10px;
+    }
+
+    .status-banner {
+      margin-top: 14px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #059669;
+    }
+
+    /* Banner de Resultado */
+    .result-modal {
+      position: absolute;
+      inset: 16px;
+      background: rgba(0, 30, 68, 0.96);
+      border: 3px solid var(--tigo-yellow);
+      border-radius: 22px;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 24px;
+      z-index: 20;
+    }
+
+    .result-modal h3 { font-size: 2.6rem; color: var(--tigo-yellow); margin-bottom: 8px; }
+    .result-modal p { font-size: 1.35rem; max-width: 520px; margin-bottom: 20px; }
+    .btn-reset {
+      background: var(--tigo-cyan);
+      color: var(--tigo-dark);
+      border: none;
+      padding: 12px 28px;
+      font-size: 1.1rem;
+      font-weight: 800;
+      border-radius: 99px;
+      cursor: pointer;
+    }
+
+    footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.9rem;
+      color: rgba(255,255,255,0.75);
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand-badge">
+      <div class="tigo-logo">tigo</div>
+      <div class="campaign-title">
+        <h1 id="mainHeadline">Salva las Galletas Tigo</h1>
+        <p id="subHeadline">Detén el horno en el segundo 10.00 exacto y llévate tu regalo</p>
+      </div>
+    </div>
+    <div class="controls-top">
+      <button class="btn-mode active" id="btnNavidad" onclick="setTheme('navidad')">🎄 Navidad (Galletas)</button>
+      <button class="btn-mode" id="btnCarnaval" onclick="setTheme('carnaval')">💦 Carnaval (Globo)</button>
+      <button class="btn-mode" onclick="simulateAction()">⚡ Probar (Espacio)</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- Escenario del Juego -->
+    <section class="stage-box">
+      <div class="timer-display" id="timerDisplay">00.000</div>
+      <div class="target-hint" id="targetHint">🎯 Meta exacta: <strong>10.000 seg</strong> (Rango ganador: 09.800 - 10.200)</div>
+
+      <!-- MODO NAVIDAD: HORNO CON GALLETAS T-I-G-O DECORADAS -->
+      <div class="oven-window" id="ovenWindow">
+        <div class="cookies-tray" id="cookiesTray">
+          <!-- Hombrecito de Jengibre -->
+          <svg class="cookie-item" width="78" height="96" viewBox="0 0 100 120">
+            <circle cx="50" cy="24" r="18" fill="#C67D3B" stroke="#8D511E" stroke-width="3"/>
+            <path d="M22 48 L78 48 L72 64 L62 62 L68 108 L52 108 L50 82 L48 108 L32 108 L38 62 L28 64 Z" fill="#C67D3B" stroke="#8D511E" stroke-width="3" stroke-linejoin="round"/>
+            <!-- Glaseado blanco y azul Tigo -->
+            <circle cx="44" cy="20" r="3" fill="#fff"/>
+            <circle cx="56" cy="20" r="3" fill="#fff"/>
+            <path d="M43 29 Q50 36 57 29" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <circle cx="50" cy="56" r="4" fill="#00C8FF"/>
+            <circle cx="50" cy="70" r="4" fill="#FFD100"/>
+          </svg>
+
+          <!-- Letras T - I - G - O en Galleta de Jengibre Decorada -->
+          <svg class="cookie-item" width="330" height="105" viewBox="0 0 360 110">
+            <!-- Galleta T -->
+            <g transform="translate(8,10)">
+              <path d="M5 10 H75 V28 H50 V90 H30 V28 H5 Z" fill="#C67D3B" stroke="#8D511E" stroke-width="4" stroke-linejoin="round"/>
+              <path d="M12 19 H68 M40 24 V82" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round"/>
+              <circle cx="40" cy="19" r="4" fill="#00C8FF"/>
+            </g>
+            <!-- Galleta I -->
+            <g transform="translate(95,10)">
+              <rect x="22" y="10" width="26" height="80" rx="8" fill="#C67D3B" stroke="#8D511E" stroke-width="4"/>
+              <line x1="35" y1="20" x2="35" y2="80" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round"/>
+              <circle cx="35" cy="16" r="4" fill="#FFD100"/>
+            </g>
+            <!-- Galleta G -->
+            <g transform="translate(160,10)">
+              <path d="M72 30 C64 12, 22 12, 14 48 C8 82, 42 94, 68 82 V52 H44 V68 H52 V74 C40 78, 28 70, 30 48 C32 28, 54 26, 60 36 Z" fill="#C67D3B" stroke="#8D511E" stroke-width="4" stroke-linejoin="round"/>
+              <path d="M62 28 C50 18, 24 22, 22 50 C20 76, 46 82, 60 74" stroke="#FFFFFF" stroke-width="4" fill="none" stroke-linecap="round"/>
+            </g>
+            <!-- Galleta O -->
+            <g transform="translate(250,10)">
+              <circle cx="45" cy="50" r="38" fill="#C67D3B" stroke="#8D511E" stroke-width="4"/>
+              <circle cx="45" cy="50" r="15" fill="#4a1905" stroke="#8D511E" stroke-width="3"/>
+              <circle cx="45" cy="50" r="27" stroke="#FFFFFF" stroke-width="4" stroke-dasharray="10 8" fill="none"/>
+            </g>
+          </svg>
+
+          <!-- Arbolito de Jengibre -->
+          <svg class="cookie-item" width="84" height="98" viewBox="0 0 100 115">
+            <polygon points="50,8 20,45 34,45 14,75 30,75 10,100 90,100 70,75 86,75 66,45 80,45" fill="#C67D3B" stroke="#8D511E" stroke-width="3" stroke-linejoin="round"/>
+            <path d="M35 42 Q50 50 65 42 M26 72 Q50 82 74 72" stroke="#fff" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+            <circle cx="50" cy="14" r="5" fill="#FFD100"/>
+            <circle cx="42" cy="58" r="3.5" fill="#00C8FF"/>
+            <circle cx="58" cy="86" r="3.5" fill="#00C8FF"/>
+          </svg>
+        </div>
+        <div class="smoke-overlay" id="smokeOverlay">💨 ¡SE QUEMARON LAS GALLETAS!</div>
+      </div>
+
+      <!-- MODO CARNAVAL: GLOBO DE AGUA -->
+      <div class="balloon-stage" id="balloonStage">
+        <div class="water-balloon" id="waterBalloon">TIGO</div>
+      </div>
+
+      <!-- Modal Resultado -->
+      <div class="result-modal" id="resultModal">
+        <h3 id="resultTitle">¡GALLETAS SALVADAS!</h3>
+        <p id="resultMsg">Detuviste el reloj en 09.985 seg. Completa tus datos en tu celular para reclamar tu regalo.</p>
+        <button class="btn-reset" onclick="resetGame()">Siguiente Participante</button>
+      </div>
+    </section>
+
+    <!-- Panel Derecho: QR Mágico -->
+    <aside class="qr-card">
+      <span class="pill">SIN HACER FILA • SIN FICHA</span>
+      <h2>Escanea y convierte tu cel en el botón mágico</h2>
+      <p>1. Apunta tu cámara al QR<br>2. Inicia y frena el horno desde tu pantalla</p>
+      <div id="qrcode"></div>
+      <div class="room-code" id="roomLabel">Conectando sala...</div>
+      <div class="status-banner" id="connStatus">🟢 Listo para escanear</div>
+    </aside>
+  </main>
+
+  <footer>
+    <span>Activación Drive-to-Store • Eje Troncal Bolivia</span>
+    <span>Presiona <strong>ESPACIO</strong> en teclado para demostración local sin celular</span>
+  </footer>
+
+  <script>
+    let theme = 'navidad';
+    let state = 'IDLE'; // IDLE, RUNNING, FINISHED
+    let startTime = 0;
+    let rafId = null;
+    let activeConn = null;
+    let roomId = 'TIGO-' + Math.floor(1000 + Math.random() * 9000);
+
+    // Síntesis de sonido 100% offline (Costo cero)
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function playTone(freq, type, duration) {
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+      gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + duration);
+    }
+
+    // Construir URL del control remoto apuntando al mismo dominio/carpeta
+    const baseUrl = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
+    const controlUrl = `${baseUrl}control.html?room=${roomId}&theme=${theme}`;
+
+    // Generar QR en pantalla
+    const qrContainer = document.getElementById('qrcode');
+    let qr = new QRCode(qrContainer, {
+      text: controlUrl,
+      width: 210,
+      height: 210,
+      colorDark: "#001E44",
+      colorLight: "#ffffff",
+      correctLevel: QRCode.CorrectLevel.M
+    });
+
+    // Conexión P2P Gratuita (PeerJS) + BroadcastChannel local
+    const bc = new BroadcastChannel('tigo_game_channel');
+    bc.onmessage = (e) => handleRemoteCommand(e.data);
+
+    const peer = new Peer(roomId);
+    peer.on('open', (id) => {
+      document.getElementById('roomLabel').innerText = `Sala Tienda: ${id}`;
+    });
+
+    peer.on('connection', (conn) => {
+      activeConn = conn;
+      document.getElementById('connStatus').innerText = '📱 ¡Cliente conectado! Listo para jugar';
+      conn.on('data', (data) => handleRemoteCommand(data));
+      conn.on('open', () => {
+        conn.send({ type: 'SYNC_THEME', theme });
+      });
+    });
+
+    function handleRemoteCommand(data) {
+      if (data.type === 'START') startGame();
+      if (data.type === 'STOP') stopGame(data.elapsed);
+      if (data.type === 'RESET') resetGame();
+    }
+
+    function setTheme(newTheme) {
+      theme = newTheme;
+      document.getElementById('btnNavidad').classList.toggle('active', theme === 'navidad');
+      document.getElementById('btnCarnaval').classList.toggle('active', theme === 'carnaval');
+
+      if (theme === 'navidad') {
+        document.getElementById('mainHeadline').innerText = 'Salva las Galletas Tigo';
+        document.getElementById('subHeadline').innerText = 'Detén el horno en el segundo 10.00 exacto y llévate tu regalo';
+        document.getElementById('ovenWindow').style.display = 'flex';
+        document.getElementById('balloonStage').style.display = 'none';
+      } else {
+        document.getElementById('mainHeadline').innerText = 'Frena el Globo Carnavalero';
+        document.getElementById('subHeadline').innerText = 'Detén el aire justo antes de los 10.00 seg o te mojas';
+        document.getElementById('ovenWindow').style.display = 'none';
+        document.getElementById('balloonStage').style.display = 'flex';
+      }
+      resetGame();
+      if (activeConn) activeConn.send({ type: 'SYNC_THEME', theme });
+    }
+
+    function startGame() {
+      if (state === 'RUNNING') return;
+      resetGame();
+      state = 'RUNNING';
+      startTime = performance.now();
+      document.getElementById('ovenWindow').classList.add('heating');
+      playTone(520, 'sine', 0.15);
+      updateLoop();
+    }
+
+    function updateLoop() {
+      if (state !== 'RUNNING') return;
+      const elapsed = (performance.now() - startTime) / 1000;
+      document.getElementById('timerDisplay').innerText = elapsed.toFixed(3).padStart(6, '0');
+
+      if (theme === 'carnaval') {
+        const scale = Math.min(2.2, 1 + (elapsed / 10) * 1.15);
+        document.getElementById('waterBalloon').style.transform = `scale(${scale})`;
+      }
+
+      // Auto-fallo si pasa de 12.5 segundos sin detener
+      if (elapsed >= 12.5) {
+        stopGame(elapsed);
+        return;
+      }
+      rafId = requestAnimationFrame(updateLoop);
+    }
+
+    function stopGame(remoteElapsed) {
+      if (state !== 'RUNNING') return;
+      state = 'FINISHED';
+      cancelAnimationFrame(rafId);
+
+      // Si el celular envió su tiempo exacto sin latencia, usamos ese; si no, el local
+      const finalTime = remoteElapsed ? parseFloat(remoteElapsed) : (performance.now() - startTime) / 1000;
+      document.getElementById('timerDisplay').innerText = finalTime.toFixed(3).padStart(6, '0');
+      document.getElementById('ovenWindow').classList.remove('heating');
+
+      const diff = Math.abs(finalTime - 10.0);
+      let outcome = 'LOSE';
+      let title = '';
+      let msg = '';
+
+      if (diff <= 0.035) {
+        outcome = 'JACKPOT';
+        title = theme === 'navidad' ? '🏆 ¡GALLETAS DORADAS PERFECTAS!' : '🏆 ¡PRECISIÓN CARNAVALERA!';
+        msg = `Tiempo épico: ${finalTime.toFixed(3)}s. ¡Ganaste el PREMIO MAYOR! Registra tu número en tu cel.`;
+        playTone(880, 'triangle', 0.4);
+      } else if (diff <= 0.25) {
+        outcome = 'WIN';
+        title = theme === 'navidad' ? '🎄 ¡SALVASTE LA NAVIDAD!' : '💦 ¡GLOBO AL LÍMITE!';
+        msg = `¡Excelente pulso! ${finalTime.toFixed(3)}s. Ganaste un regalo instantáneo Tigo.`;
+        playTone(660, 'sine', 0.3);
+      } else {
+        outcome = 'CONSOLATION';
+        if (finalTime < 10.0) {
+          title = theme === 'navidad' ? '🥶 ¡FALTARON SEGUNDOS!' : '🎈 ¡FALTÓ AIRE!';
+          msg = `Frenaste en ${finalTime.toFixed(3)}s. ¡Igual te llevas 2GB GRATIS por participar!`;
+        } else {
+          title = theme === 'navidad' ? '💨 ¡SE QUEMARON LAS GALLETAS!' : '💥 ¡EXPLOTÓ EL GLOBO!';
+          msg = `Te pasaste (${finalTime.toFixed(3)}s). ¡Igual ganaste 2GB GRATIS de consuelo!`;
+          if (theme === 'navidad') document.getElementById('ovenWindow').classList.add('burned');
+          if (theme === 'navidad') document.getElementById('smokeOverlay').style.display = 'flex';
+        }
+        playTone(180, 'sawtooth', 0.35);
+      }
+
+      document.getElementById('resultTitle').innerText = title;
+      document.getElementById('resultMsg').innerText = msg;
+      document.getElementById('resultModal').style.display = 'flex';
+
+      if (activeConn) {
+        activeConn.send({ type: 'RESULT', outcome, time: finalTime.toFixed(3), title });
+      }
+    }
+
+    function resetGame() {
+      state = 'IDLE';
+      cancelAnimationFrame(rafId);
+      document.getElementById('timerDisplay').innerText = '00.000';
+      document.getElementById('ovenWindow').classList.remove('heating', 'burned');
+      document.getElementById('smokeOverlay').style.display = 'none';
+      document.getElementById('waterBalloon').style.transform = 'scale(1)';
+      document.getElementById('resultModal').style.display = 'none';
+    }
+
+    function simulateAction() {
+      if (state === 'IDLE' || state === 'FINISHED') startGame();
+      else if (state === 'RUNNING') stopGame();
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (e.code === 'Space') {
+        e.preventDefault();
+        simulateAction();
+      }
+    });
+  </script>
+</body>
+</html>
